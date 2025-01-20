@@ -66,7 +66,7 @@
         camera.add(light);
 
         const colors = [0xff0000, 0x00ff00, 0x0000ff];
-        const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100); // Заменили BoxGeometry на TorusGeometry
+        const geometry = new THREE.CylinderGeometry(0, 1, 1, 4); // Создание пирамиды
 
         for (let i = 0; i < 300; i++) {
 
@@ -141,11 +141,8 @@
     }
 
     function render() {
-        theta += 0
-
-	theta += 0.1;
-
-        camera.position.x = radius * Math.sin(THREE.MathUtils.degToRad(theta));
+        theta += 0.1
+	            camera.position.x = radius * Math.sin(THREE.MathUtils.degToRad(theta));
         camera.position.y = radius * Math.sin(THREE.MathUtils.degToRad(theta));
         camera.position.z = radius * Math.cos(THREE.MathUtils.degToRad(theta));
         camera.lookAt(scene.position);
