@@ -38,7 +38,7 @@
         type: 'HalfFloatType'
     };
 
-    let renderer, scene, camera, controls, ringMesh, loader;
+    let renderer, scene, camera, controls, starMesh, loader;
 
     init();
 
@@ -56,12 +56,28 @@
 
         scene = new THREE.Scene();
 
-        // Изменение на кольцо
-        ringMesh = new THREE.Mesh(
-            new THREE.TorusGeometry(1, 0.4, 128, 128), // Заменили TorusKnotGeometry на TorusGeometry
-            new THREE.MeshStandardMaterial({ roughness: params.roughness, metalness: params.metalness })
-        );
-        scene.add(ringMesh);
+        // Создание звезды
+        const starShape = new THREE.Shape();
+        const outerRadius = 1;
+        const innerRadius = 0.5;
+        const points = 5;
+
+        for (let i = 0; i < points; i++) {
+            const angle = (i / points) * Math.PI * 2;
+            const xOuter = Math.cos(angle) * outerRadius;
+            const yOuter = Math.sin(angle) * outerRadius;
+            starShape.lineTo(xOuter, yOuter);
+
+            const angleInner = ((i + 0.5) / points) * Math.PI * 2;
+            const xInner = Math.cos(angleInner) * innerRadius;
+            const yInner = Math.sin(angleInner) * innerRadius;
+            starShape.lineTo(xInner, yInner);
+        }
+        starShape.closePath();
+
+        const geometry = new THREE.ShapeGeometry(starShape);
+        starMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ roughness: params.roughness, metalness: params.metalness }));
+        scene.add(starMesh);
 
         camera = new THREE.PerspectiveCamera(
             50,
@@ -100,8 +116,8 @@
         gui.add(params, 'metalness', 0, 1, 0.01);
         gui.add(params, 'roughness', 0, 1, 0.01);
         gui.add(params, 'exposure', 0, 4, 0.01);
-        gui.add(params, 'resolution', ['2k', '4k']).onChange((value) => {
-            loadEnvironment(value, params.type);
+        gui.add(params, 'resolution', ['2k', '4k']).onChange((value) =>
+		            loadEnvironment(value, params.type);
         });
         gui.add(params, 'type', ['HalfFloatType', 'FloatType']).onChange((value) => {
             loadEnvironment(params.resolution, value);
@@ -110,37 +126,28 @@
         gui.open();
 
         window.addEventListener('resize', onWindowResize);
-
     }
 
     function onWindowResize() {
-
         camera.aspect = window.innerWidth / window.innerHeight;
-
         camera.updateProjectionMatrix();
-
         renderer.setSize(window.innerWidth, window.innerHeight);
-
     }
 
     function render() {
-
-        ringMesh.material.roughness = params.roughness;
-        ringMesh.material.metalness = params.metalness;
+        starMesh.material.roughness = params.roughness;
+        starMesh.material.metalness = params.metalness;
 
         if (params.autoRotate) {
-            ringMesh.rotation.y += 0.005;
+            starMesh.rotation.y += 0.005;
         }
 
         renderer.toneMappingExposure = params.exposure;
 
         controls.update();
-
-
-			renderer.render(scene, camera);
+        renderer.render(scene, camera);
     }
 
-
-		</script>
-	</body>
+</script>
+</body>
 </html>
