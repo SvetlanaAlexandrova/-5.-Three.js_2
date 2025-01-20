@@ -38,7 +38,7 @@
         type: 'HalfFloatType'
     };
 
-    let renderer, scene, camera, controls, ringMesh, loader;
+    let renderer, scene, camera, controls, ellipsoidMesh, loader;
 
     init();
 
@@ -56,12 +56,16 @@
 
         scene = new THREE.Scene();
 
-        // Изменение на кольцо
-        ringMesh = new THREE.Mesh(
-            new THREE.TorusGeometry(1, 0.4, 128, 128), // Заменили TorusKnotGeometry на TorusGeometry
-            new THREE.MeshStandardMaterial({ roughness: params.roughness, metalness: params.metalness })
-        );
-        scene.add(ringMesh);
+        // Создание эллипсоида
+        const radiusX = 1; // Радиус по оси X
+        const radiusY = 0.5; // Радиус по оси Y
+        const radiusZ = 0.75; // Радиус по оси Z
+        const geometry = new THREE.SphereGeometry(1, 32, 32); // Создаем сферу
+        const ellipsoidMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ roughness: params.roughness, metalness: params.metalness }));
+
+        // Масштабируем сферу, чтобы получить эллипсоид
+        ellipsoidMesh.scale.set(radiusX, radiusY, radiusZ);
+        scene.add(ellipsoidMesh);
 
         camera = new THREE.PerspectiveCamera(
             50,
@@ -114,22 +118,18 @@
     }
 
     function onWindowResize() {
-
         camera.aspect = window.innerWidth / window.innerHeight;
-
         camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
+        renderer.set
+		        renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
     function render() {
-
-        ringMesh.material.roughness = params.roughness;
-        ringMesh.material.metalness = params.metalness;
+        ellipsoidMesh.material.roughness = params.roughness;
+        ellipsoidMesh.material.metalness = params.metalness;
 
         if (params.autoRotate) {
-            ringMesh.rotation.y += 0.005;
+            ellipsoidMesh.rotation.y += 0.005;
         }
 
         renderer.toneMappingExposure = params.exposure;
