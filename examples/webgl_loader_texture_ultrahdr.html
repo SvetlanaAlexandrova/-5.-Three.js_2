@@ -38,7 +38,7 @@
         type: 'HalfFloatType'
     };
 
-    let renderer, scene, camera, controls, ringMesh, loader;
+    let renderer, scene, camera, controls, pyramidMesh, loader;
 
     init();
 
@@ -56,12 +56,10 @@
 
         scene = new THREE.Scene();
 
-        // Изменение на кольцо
-        ringMesh = new THREE.Mesh(
-            new THREE.TorusGeometry(1, 0.4, 128, 128), // Заменили TorusKnotGeometry на TorusGeometry
-            new THREE.MeshStandardMaterial({ roughness: params.roughness, metalness: params.metalness })
-        );
-        scene.add(ringMesh);
+        // Создание пирамиды
+        const geometry = new THREE.CylinderGeometry(0, 1, 1, 4); // Основание с 4 сторонами (квадрат)
+        pyramidMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ roughness: params.roughness, metalness: params.metalness }));
+        scene.add(pyramidMesh);
 
         camera = new THREE.PerspectiveCamera(
             50,
@@ -114,22 +112,17 @@
     }
 
     function onWindowResize() {
-
         camera.aspect = window.innerWidth / window.innerHeight;
-
         camera.updateProjectionMatrix();
-
         renderer.setSize(window.innerWidth, window.innerHeight);
-
     }
 
     function render() {
-
-        ringMesh.material.roughness = params.roughness;
-        ringMesh.material.metalness = params.metalness;
+        pyramidMesh.material.roughness = params.roughness;
+        pyramidMesh.material.metalness = params.metalness;
 
         if (params.autoRotate) {
-            ringMesh.rotation.y += 0.005;
+            pyramidMesh.rotation.y += 0.005;
         }
 
         renderer.toneMappingExposure = params.exposure;
